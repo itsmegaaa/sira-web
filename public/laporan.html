@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Laporan - SIRA</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#D4AF37">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(to bottom, #0F172A, #020617);
+      min-height: 100vh;
+      color: white;
+    }
+    .glass-card {
+      @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl;
+    }
+    .swipe-behind {
+      @apply absolute inset-0 bg-red-500 rounded-3xl flex items-center justify-end px-6;
+      z-index: 0;
+    }
+    .swipe-front {
+      @apply relative w-full h-full glass-card transition-transform duration-200 ease-out;
+      z-index: 10;
+    }
+    .swipe-card-container {
+      @apply relative w-full mb-3;
+      touch-action: pan-y;
+    }
+  </style>
+</head>
+<body class="pb-20 md:pb-0 hide-scrollbar overflow-y-auto">
+  
+  <!-- App Bar -->
+  <header class="sticky top-0 z-40 bg-[#0F172A]/80 backdrop-blur-lg border-b border-white/10">
+    <div class="px-4 h-16 flex items-center justify-between gap-3">
+      <a href="/home.html" class="p-2 -ml-2 text-white/80 hover:text-white rounded-full hover:bg-white/10 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+      </a>
+      <h1 class="text-lg font-bold tracking-tight flex-1 truncate" id="appBarTitle">LAPORAN</h1>
+      <button id="btnSyncAppBar" class="hidden p-2 text-[#D4AF37] hover:bg-white/10 rounded-full transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+      </button>
+    </div>
+    
+    <!-- Search & Filter Bar -->
+    <div class="px-4 pb-3 flex gap-2">
+      <div class="relative flex-1">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+        <input type="text" id="searchInput" class="w-full bg-white/10 border border-white/20 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#D4AF37] transition-colors" placeholder="Cari nama, bank, covernote...">
+      </div>
+      <button id="filterBtn" class="bg-white/10 border border-white/20 px-3 py-2.5 rounded-xl hover:bg-white/20 transition-colors flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Filter Modal (Hidden by default) -->
+  <div id="filterModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm modal-backdrop"></div>
+    <div class="relative w-full sm:max-w-md bg-[#1E293B] border-t sm:border border-white/10 rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl transform translate-y-full sm:translate-y-0 transition-transform duration-300 filter-panel">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold">Filter Status</h3>
+        <button id="closeFilterBtn" class="p-1 text-white/50 hover:text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+      </div>
+      <div class="space-y-2" id="filterOptions">
+        <!-- JS rendered options -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="p-4 max-w-5xl mx-auto min-h-screen">
+    
+    <div class="flex justify-between items-center mb-4">
+      <div class="text-sm text-white/50" id="summaryText">Memuat...</div>
+    </div>
+
+    <!-- List Container -->
+    <div id="listContainer" class="flex flex-col">
+      <!-- Skeletons initially -->
+      <div class="skeleton-card mb-3 glass-card p-4 animate-pulse">
+        <div class="flex justify-between items-start mb-2">
+          <div class="h-5 bg-white/10 rounded w-2/3"></div>
+          <div class="h-5 bg-white/10 rounded w-16"></div>
+        </div>
+        <div class="h-4 bg-white/10 rounded w-1/2 mb-4"></div>
+        <div class="border-t border-white/5 pt-3 flex justify-between">
+          <div class="h-4 bg-white/10 rounded w-1/3"></div>
+          <div class="h-4 bg-white/10 rounded w-1/4"></div>
+        </div>
+      </div>
+      <div class="skeleton-card mb-3 glass-card p-4 animate-pulse">
+        <div class="flex justify-between items-start mb-2">
+          <div class="h-5 bg-white/10 rounded w-3/4"></div>
+          <div class="h-5 bg-white/10 rounded w-16"></div>
+        </div>
+        <div class="h-4 bg-white/10 rounded w-1/2 mb-4"></div>
+        <div class="border-t border-white/5 pt-3 flex justify-between">
+          <div class="h-4 bg-white/10 rounded w-1/3"></div>
+          <div class="h-4 bg-white/10 rounded w-1/4"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State (Hidden) -->
+    <div id="emptyState" class="hidden flex-col items-center justify-center py-20 gap-4">
+      <svg class="w-20 h-20 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"></path></svg>
+      <p class="text-white/40 text-base">Tidak ada data ditemukan.</p>
+      <p class="text-white/25 text-sm">Coba ubah filter atau tambah berkas baru.</p>
+    </div>
+
+    <!-- Load More Button -->
+    <div class="flex justify-center mt-6 mb-10">
+      <button id="btnLoadMore" class="hidden bg-white/5 border border-white/10 px-6 py-2 rounded-full text-sm font-medium hover:bg-white/10 transition-colors">
+        Muat Lebih Banyak
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Expandable FAB (Desktop/Tablet mostly) -->
+  <div class="fixed bottom-24 right-6 md:bottom-8 z-40 flex flex-col items-end gap-3" id="fabContainer">
+    <a href="/log.html" id="fabLog" class="hidden w-12 h-12 bg-[#1E293B] border border-white/10 rounded-full flex items-center justify-center shadow-lg hover:bg-white/10 transition-colors">
+      <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    </a>
+    <a href="#" id="fabAdd" class="hidden w-12 h-12 bg-[#1E293B] border border-white/10 rounded-full flex items-center justify-center shadow-lg hover:bg-white/10 transition-colors">
+      <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+    </a>
+    <button id="fabMain" class="w-14 h-14 bg-[#0F172A] border border-[#D4AF37]/30 rounded-full flex items-center justify-center shadow-lg shadow-[#D4AF37]/20 hover:scale-105 transition-all duration-300">
+      <svg id="fabIcon" class="w-6 h-6 text-[#D4AF37] transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+    </button>
+  </div>
+
+  <!-- Delete Confirm Dialog -->
+  <div id="deleteDialog" class="fixed inset-0 z-[60] flex items-center justify-center hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm dialog-backdrop"></div>
+    <div class="relative w-[90%] max-w-sm bg-[#1E293B] border border-white/10 rounded-2xl p-6 shadow-2xl dialog-panel">
+      <h3 class="text-xl font-bold mb-2 text-red-400">Hapus Berkas?</h3>
+      <p class="text-white/70 text-sm mb-6">Berkas yang dihapus tidak dapat dikembalikan. Lanjutkan?</p>
+      <div class="flex gap-3 justify-end">
+        <button id="btnCancelDelete" class="px-4 py-2 text-sm font-medium text-white/70 hover:text-white bg-white/5 rounded-xl hover:bg-white/10 transition-colors">Batal</button>
+        <button id="btnConfirmDelete" class="px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation (Mobile) -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#0F172A]/90 backdrop-blur-xl border-t border-white/10 z-30 pb-safe">
+    <div class="flex justify-around items-center h-16">
+      <a href="/home.html" class="flex flex-col items-center justify-center w-full h-full text-white/50 hover:text-white/80 transition-colors">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+      </a>
+      <a href="#" class="flex flex-col items-center justify-center w-full h-full text-[#D4AF37] relative">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        <div class="absolute bottom-1 w-1 h-1 rounded-full bg-[#D4AF37]"></div>
+      </a>
+      <div class="w-full flex justify-center relative">
+        <a id="mobileFabAdd" href="#" class="absolute -top-5 w-14 h-14 bg-[#D4AF37] rounded-full flex items-center justify-center shadow-lg shadow-[#D4AF37]/30 text-[#0F172A] hover:scale-105 transition-transform border-4 border-[#0F172A]">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        </a>
+      </div>
+      <a href="/log.html" class="flex flex-col items-center justify-center w-full h-full text-white/50 hover:text-white/80 transition-colors">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+      </a>
+    </div>
+  </nav>
+
+  <script type="module" src="/js/auth-guard.js"></script>
+  <script type="module" src="/js/laporan.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  </script>
+</body>
+</html>

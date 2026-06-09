@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Form Laporan - SIRA</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#D4AF37">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(to bottom, #0F172A, #020617);
+      min-height: 100vh;
+      color: white;
+    }
+    .glass-card {
+      @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl;
+    }
+    .input-glass {
+      @apply w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-colors;
+    }
+    .input-glass[readonly] {
+      @apply bg-black/20 text-white/50 cursor-not-allowed border-transparent;
+    }
+    input[type="date"] {
+      color-scheme: dark;
+    }
+    select option {
+      background-color: #0F172A;
+      color: white;
+    }
+  </style>
+</head>
+<body class="pb-24">
+  
+  <!-- App Bar -->
+  <header class="sticky top-0 z-40 bg-[#0F172A]/80 backdrop-blur-lg border-b border-white/10">
+    <div class="px-4 h-16 flex items-center gap-3">
+      <button onclick="window.history.back()" class="p-2 -ml-2 text-white/80 hover:text-white rounded-full hover:bg-white/10 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+      </button>
+      <h1 class="text-lg font-bold tracking-tight flex-1" id="appBarTitle">TAMBAH LAPORAN</h1>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="p-4 max-w-3xl mx-auto space-y-6">
+    
+    <!-- Skeleton Loading -->
+    <div id="skeletonLoading" class="space-y-6 animate-pulse hidden">
+      <div class="glass-card p-5"><div class="h-4 bg-white/10 rounded w-1/3 mb-4"></div><div class="space-y-4"><div class="h-12 bg-white/10 rounded w-full"></div><div class="h-12 bg-white/10 rounded w-full"></div></div></div>
+    </div>
+
+    <!-- Form -->
+    <form id="laporanForm" class="space-y-6 hidden">
+      
+      <!-- INFORMASI UMUM -->
+      <div class="glass-card overflow-hidden">
+        <div class="bg-white/5 px-5 py-3 border-b border-white/10">
+          <h3 class="text-sm font-bold text-[#D4AF37] tracking-wider">INFORMASI UMUM</h3>
+        </div>
+        <div class="p-5 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-1">Nama Debitur <span class="text-red-400">*</span></label>
+            <input type="text" id="namaDebitur" required class="input-glass uppercase" placeholder="Masukkan nama debitur">
+          </div>
+          
+          <div class="relative">
+            <label class="block text-sm font-medium text-white/70 mb-1">Nama Notaris</label>
+            <input type="text" id="namaNotaris" class="input-glass" placeholder="Ketik untuk mencari notaris..." autocomplete="off">
+            <div id="notarisDropdown" class="absolute z-50 w-full mt-1 bg-[#1E293B] border border-white/10 rounded-xl shadow-2xl max-h-60 overflow-y-auto hidden"></div>
+          </div>
+
+          <div class="relative">
+            <label class="block text-sm font-medium text-white/70 mb-1">Nama Bank</label>
+            <input type="text" id="namaBank" class="input-glass" placeholder="Ketik untuk mencari bank..." autocomplete="off">
+            <div id="bankDropdown" class="absolute z-50 w-full mt-1 bg-[#1E293B] border border-white/10 rounded-xl shadow-2xl max-h-60 overflow-y-auto hidden"></div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-1">PIC Bank</label>
+            <input type="text" id="picBank" class="input-glass" placeholder="Otomatis terisi jika bank dipilih dari daftar">
+          </div>
+        </div>
+      </div>
+
+      <!-- DETAIL ORDER -->
+      <div class="glass-card overflow-hidden">
+        <div class="bg-white/5 px-5 py-3 border-b border-white/10">
+          <h3 class="text-sm font-bold text-[#D4AF37] tracking-wider">DETAIL ORDER</h3>
+        </div>
+        <div class="p-5 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-1">No Surat Order</label>
+            <input type="text" id="noSuratOrder" class="input-glass" placeholder="Masukkan no surat">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-1">Tanggal Order</label>
+            <input type="date" id="tanggalOrder" class="input-glass accent-[#D4AF37]">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-1">Jenis Pekerjaan</label>
+            <select id="jenis" class="input-glass appearance-none">
+              <option value="Hak Tanggungan">Hak Tanggungan</option>
+              <option value="Fidusia">Fidusia</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-1">Rincian Order</label>
+            <textarea id="rincianOrder" rows="3" class="input-glass resize-none" placeholder="Masukkan rincian..."></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-1">No Covernote</label>
+            <input type="text" id="noCovernote" class="input-glass" placeholder="Masukkan no covernote">
+          </div>
+        </div>
+      </div>
+
+      <!-- FINANSIAL -->
+      <div class="glass-card overflow-hidden">
+        <div class="bg-white/5 px-5 py-3 border-b border-white/10">
+          <h3 class="text-sm font-bold text-[#D4AF37] tracking-wider">FINANSIAL</h3>
+        </div>
+        <div class="p-5 space-y-4">
+          <div class="relative">
+            <label class="block text-sm font-medium text-white/70 mb-1">Limit Plafon</label>
+            <div class="absolute inset-y-0 left-0 top-6 pl-4 flex items-center pointer-events-none">
+              <span class="text-white/50">Rp</span>
+            </div>
+            <input type="text" id="limitPlafon" class="input-glass pl-12" placeholder="0" inputmode="numeric">
+          </div>
+
+          <div class="relative">
+            <label class="block text-sm font-medium text-white/70 mb-1">Nilai HT</label>
+            <div class="absolute inset-y-0 left-0 top-6 pl-4 flex items-center pointer-events-none">
+              <span class="text-white/50">Rp</span>
+            </div>
+            <input type="text" id="nilaiHT" class="input-glass pl-12" placeholder="0" inputmode="numeric">
+          </div>
+
+          <div class="relative">
+            <label class="block text-sm font-medium text-white/70 mb-1">Biaya Notaris</label>
+            <div class="absolute inset-y-0 left-0 top-6 pl-4 flex items-center pointer-events-none">
+              <span class="text-white/50">Rp</span>
+            </div>
+            <input type="text" id="biayaNotaris" class="input-glass pl-12" placeholder="0" inputmode="numeric">
+          </div>
+        </div>
+      </div>
+
+      <!-- PELAKSANAAN & SLA -->
+      <div class="glass-card overflow-hidden">
+        <div class="bg-white/5 px-5 py-3 border-b border-white/10 flex justify-between items-center">
+          <h3 class="text-sm font-bold text-[#D4AF37] tracking-wider">PELAKSANAAN & SLA</h3>
+          <svg class="w-4 h-4 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Auto-calculated"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+        </div>
+        <div class="p-5 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-1">Tanggal Pelaksanaan</label>
+            <div class="relative">
+              <input type="date" id="tanggalPelaksanaan" readonly class="input-glass">
+              <div class="absolute right-3 top-3 text-white/30"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg></div>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-white/70 mb-1">Batas SLA</label>
+              <div class="relative">
+                <input type="date" id="batasSla" readonly class="input-glass">
+                <div class="absolute right-3 top-3 text-white/30"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg></div>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-white/70 mb-1">Umur Pekerjaan</label>
+              <div class="relative">
+                <input type="text" id="umurPekerjaan" readonly class="input-glass">
+                <div class="absolute right-3 top-3 text-white/30"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROGRES & BAST -->
+      <div class="glass-card overflow-hidden">
+        <div class="bg-white/5 px-5 py-3 border-b border-white/10">
+          <h3 class="text-sm font-bold text-[#D4AF37] tracking-wider">PROGRES & BAST</h3>
+        </div>
+        <div class="p-5 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-1">Status Pekerjaan</label>
+            <select id="statusPekerjaan" class="input-glass appearance-none">
+              <option value="PROSES">PROSES</option>
+              <option value="PENDING">PENDING</option>
+              <option value="BERMASALAH">BERMASALAH</option>
+              <option value="SELESAI">SELESAI</option>
+              <option value="BATAL">BATAL</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-1">Progres Detail</label>
+            <textarea id="progresDetail" rows="3" class="input-glass resize-none" placeholder="Masukkan progres detail..."></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-1">Tanggal BAST</label>
+            <input type="date" id="tanggalBast" class="input-glass accent-[#D4AF37]">
+            <p class="text-xs text-white/40 mt-1">Mengisi tanggal BAST akan otomatis mengubah status menjadi SELESAI</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATATAN TAMBAHAN -->
+      <div class="glass-card overflow-hidden">
+        <div class="bg-white/5 px-5 py-3 border-b border-white/10">
+          <h3 class="text-sm font-bold text-[#D4AF37] tracking-wider">CATATAN TAMBAHAN</h3>
+        </div>
+        <div class="p-5 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-1">Kekurangan Berkas</label>
+            <textarea id="kekurangan" rows="2" class="input-glass resize-none" placeholder="Opsional..."></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-1">Notes Tambahan</label>
+            <textarea id="notes" rows="2" class="input-glass resize-none" placeholder="Opsional..."></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-1">PIC Internal</label>
+            <input type="text" id="picInternal" class="input-glass" placeholder="Opsional...">
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Section -->
+      <div class="pt-4 pb-8">
+        <button type="submit" id="submitBtn" class="w-full bg-[#D4AF37] text-[#0F172A] font-bold py-3.5 rounded-xl hover:bg-[#FBE18D] transition-colors flex justify-center items-center gap-2 shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          <span id="submitText">SIMPAN BERKAS</span>
+        </button>
+      </div>
+
+    </form>
+  </main>
+
+  <script type="module" src="/js/auth-guard.js"></script>
+  <script type="module" src="/js/form.js"></script>
+</body>
+</html>

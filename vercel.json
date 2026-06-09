@@ -1,0 +1,29 @@
+{
+  "rewrites": [
+    { "source": "/",            "destination": "/public/login.html" },
+    { "source": "/login",       "destination": "/public/login.html" },
+    { "source": "/home",        "destination": "/public/home.html" },
+    { "source": "/laporan",     "destination": "/public/laporan.html" },
+    { "source": "/detail",      "destination": "/public/detail.html" },
+    { "source": "/form",        "destination": "/public/form.html" },
+    { "source": "/log",         "destination": "/public/log.html" },
+    { "source": "/master-bank", "destination": "/public/master-bank.html" }
+  ],
+  "headers": [
+    {
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" },
+        { "key": "Service-Worker-Allowed", "value": "/" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options",        "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy",        "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ]
+}

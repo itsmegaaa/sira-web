@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Login - SIRA</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#D4AF37">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(to bottom, #0F172A, #020617);
+      min-height: 100vh;
+      color: white;
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center p-4">
+  <div class="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
+    <div class="flex flex-col items-center mb-8">
+      <div class="w-16 h-16 rounded-full bg-[#D4AF37]/20 flex items-center justify-center mb-4">
+        <!-- Shield Icon -->
+        <svg class="w-8 h-8 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+        </svg>
+      </div>
+      <h1 class="text-3xl font-bold tracking-tight mb-2">SIRA</h1>
+      <p class="text-white/50 text-center text-sm">Sistem Informasi Riwayat Administrasi</p>
+    </div>
+
+    <form id="loginForm" class="space-y-6">
+      <div id="errorMsg" class="hidden bg-red-500/20 border border-red-500/50 text-red-200 text-sm rounded-xl p-3 text-center"></div>
+      
+      <div>
+        <label class="block text-sm font-medium text-white/70 mb-2">Email</label>
+        <input type="email" id="email" required
+          class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-colors"
+          placeholder="admin@sira.com">
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-white/70 mb-2">Password</label>
+        <input type="password" id="password" required
+          class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-colors"
+          placeholder="••••••••">
+      </div>
+
+      <button type="submit" id="submitBtn"
+        class="w-full bg-[#D4AF37] text-[#0F172A] font-bold py-3.5 rounded-xl hover:bg-[#FBE18D] transition-colors flex justify-center items-center gap-2">
+        <span>MASUK KE SISTEM</span>
+      </button>
+    </form>
+  </div>
+
+  <script type="module" src="/js/login.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  </script>
+</body>
+</html>
