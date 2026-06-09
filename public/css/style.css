@@ -14,6 +14,10 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
+body {
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* Toast Animations */
 @keyframes slideUp {
   from { transform: translateY(100px); opacity: 0; }

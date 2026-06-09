@@ -347,7 +347,7 @@ async function loadData(isRefresh = true) {
       }
       
       innerHTML += `
-        <a href="/detail.html?id=${item.id}&tahun=${tahun}" class="${isAdmin ? 'swipe-front block' : 'glass-card block p-4'} p-4 hover:bg-white/10 transition-colors">
+        <a href="/detail.html?id=${item.id}&tahun=${tahun}" class="${isAdmin ? 'swipe-front block' : 'glass-card block p-4'} p-4 active:scale-[0.98] transition-transform">
           <div class="flex justify-between items-start mb-2 gap-2">
             <div class="flex items-center gap-2 flex-1 min-w-0">
               <h3 class="font-bold uppercase truncate">${item.namaDebitur || '-'}</h3>
