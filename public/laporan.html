@@ -24,10 +24,12 @@
     .swipe-behind {
       @apply absolute inset-0 bg-red-500 rounded-3xl flex items-center justify-end px-6;
       z-index: 0;
+      opacity: 0;
     }
     .swipe-front {
       @apply relative w-full h-full bg-[#1E293B] border border-white/10 rounded-3xl transition-transform duration-200 ease-out;
       z-index: 10;
+      -webkit-tap-highlight-color: transparent;
     }
     .swipe-card-container {
       @apply relative w-full mb-3;
