@@ -74,9 +74,7 @@
 .swipe-front {
   position: relative;
   z-index: 1;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: #1E293B;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1.5rem;
   will-change: transform;
