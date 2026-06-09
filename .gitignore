@@ -4,5 +4,4 @@
 node_modules/
 package.json
 package-lock.json
-firebase-config.js
-public/js/firebase-config.js
+
