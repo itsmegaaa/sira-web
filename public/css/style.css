@@ -66,6 +66,8 @@ body {
   margin-bottom: 0.75rem;
 }
 .swipe-behind {
+  opacity: 0; /* hidden by default */
+  transition: opacity 0.2s ease;
   position: absolute;
   inset: 0;
   display: flex;
