@@ -1,5 +1,5 @@
 import { auth, db, collection, getDocs, doc, getDoc, query, orderBy, limit, startAfter, where, deleteDoc } from './firebase-config.js';
-import { debounce, formatTanggalTampil, showToast, catatAktivitas } from './utils.js';
+import { debounce, formatTanggalTampil, showToast, catatAktivitas, escapeHtml } from './utils.js';
 
 // Get Query Params
 const urlParams = new URLSearchParams(window.location.search);
@@ -287,18 +287,21 @@ async function loadData(isRefresh = true) {
   try {
     const collRef = collection(db, `laporan_${tahun}`);
     let constraints = [];
-    
-    // Default order
-    constraints.push(orderBy('waktuUpdate', 'desc'));
-    
-    // Add where clause for filter if not SEMUA
+
+    // where() must precede orderBy() for composite index usage
     if (currentFilter !== 'SEMUA') {
       constraints.push(where('statusPekerjaan', '==', currentFilter));
     }
-    
-    constraints.push(limit(PAGE_SIZE));
 
-    if (lastDocCursor) {
+    // Default order
+    constraints.push(orderBy('waktuUpdate', 'desc'));
+
+    // When searching, fetch all matching docs so client-side search is comprehensive
+    if (!searchTerm) {
+      constraints.push(limit(PAGE_SIZE));
+    }
+
+    if (lastDocCursor && !searchTerm) {
       constraints.push(startAfter(lastDocCursor));
     }
 
@@ -358,7 +361,7 @@ async function loadData(isRefresh = true) {
         <a href="/detail.html?id=${item.id}&tahun=${tahun}" class="${isAdmin ? 'swipe-front block' : 'glass-card block p-4'} p-4 active:scale-[0.98] transition-transform">
           <div class="flex justify-between items-start mb-2 gap-2">
             <div class="flex items-center gap-2 flex-1 min-w-0">
-              <h3 class="font-bold uppercase truncate">${item.namaDebitur || '-'}</h3>
+              <h3 class="font-bold uppercase truncate">${escapeHtml(item.namaDebitur || '-')}</h3>
               ${syncWarning}
             </div>
             <div class="shrink-0 flex items-center gap-2">
@@ -374,7 +377,7 @@ async function loadData(isRefresh = true) {
           </div>
           
           <div class="text-sm text-white/50 mb-3 truncate">
-            ${item.namaBank || '-'} &bull; ${item.namaNotaris || '-'}
+            ${escapeHtml(item.namaBank || '-')} &bull; ${escapeHtml(item.namaNotaris || '-')}
           </div>
           
           <div class="border-t border-white/10 pt-3 flex justify-between items-center">

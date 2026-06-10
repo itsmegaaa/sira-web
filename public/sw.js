@@ -1,14 +1,14 @@
-const CACHE = 'sira-v1';
+const CACHE = 'sira-v2';
 const ASSETS = [
-  '/login.html', 
-  '/home.html', 
+  '/login.html',
+  '/home.html',
   '/laporan.html',
-  '/detail.html', 
-  '/form.html', 
-  '/log.html', 
+  '/detail.html',
+  '/form.html',
+  '/log.html',
   '/master-bank.html',
-  '/css/style.css', 
-  '/js/utils.js', 
+  '/css/style.css',
+  '/js/utils.js',
   '/js/firebase-config.js',
   '/js/auth-guard.js',
   '/js/login.js',
@@ -21,7 +21,16 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', e => {
+  self.skipWaiting();
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    ).then(() => clients.claim())
+  );
 });
 
 self.addEventListener('fetch', e => {

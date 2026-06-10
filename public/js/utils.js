@@ -1,5 +1,11 @@
 import { db, addDoc, collection, serverTimestamp } from './firebase-config.js';
 
+// Escape HTML special characters to prevent XSS when inserting into innerHTML
+export function escapeHtml(str) {
+  if (typeof str !== 'string') return String(str ?? '');
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 // Format Indonesian Rupiah
 export function formatRupiah(angka) {
   if (!angka && angka !== 0) return '';
@@ -66,9 +72,15 @@ export function formatTanggalTampil(dateInput) {
 
 // Diff checker for edit mode
 export function hitungDiff(oldData, newData) {
+  function normalize(val) {
+    if (val && typeof val === 'object' && typeof val.toDate === 'function') {
+      return val.toDate().toISOString();
+    }
+    return val;
+  }
   let changes = [];
   for (let key in newData) {
-    if (oldData[key] !== newData[key]) {
+    if (normalize(oldData[key]) !== normalize(newData[key])) {
       changes.push(`${key} berubah`);
     }
   }
