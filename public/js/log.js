@@ -1,5 +1,5 @@
 import { db, collection, query, orderBy, limit, onSnapshot } from './firebase-config.js';
-import { showToast } from './utils.js';
+import { showToast, escapeHtml } from './utils.js';
 
 const skeletonLoading = document.getElementById('skeletonLoading');
 const dataContainer = document.getElementById('dataContainer');
@@ -105,9 +105,9 @@ function loadLogs() {
             </div>
           </div>
         </div>
-        <p class="text-sm text-white/80 mb-3 whitespace-pre-line leading-relaxed">${data.detail || '-'}</p>
+        <p class="text-sm text-white/80 mb-3 whitespace-pre-line leading-relaxed">${escapeHtml(data.detail || '-')}</p>
         <div class="border-t border-white/5 pt-2 mt-2">
-          <p class="text-xs text-white/40 truncate">oleh: ${data.oleh || 'Sistem'}</p>
+          <p class="text-xs text-white/40 truncate">oleh: ${escapeHtml(data.oleh || 'Sistem')}</p>
         </div>
       `;
       
